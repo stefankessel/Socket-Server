@@ -2,39 +2,67 @@ package server;
 
 
 
+import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
 
 public class Server {
-	private String msg;
-	public Server(int port) throws Exception {
+	private ServerSocket server;
+	
+	public Server(int port) throws IOException {
 
-		ServerSocket server = new ServerSocket(port);
+		this.server = new ServerSocket(port);
 		System.out.println("Server runner on Port" + port);
 		
 		
-		while(true) {
-			Socket socket = server.accept();
-			new SocketThread(socket).start();
-			
-		}
+
 		
 	}
 	
-	private void setMsg(String msg) {
-		this.msg = msg;
+	private void startServer() {
+		new Thread(() -> {
+			while(true) {
+				try {
+					Socket socket = this.server.accept();
+					System.out.println("Cient has connected");
+					//new ClientHandler(socket).start();
+					Thread thread = new Thread(new ClientHandler(socket));
+					thread.start();
+				} catch (IOException e) {
+					closeServer();
+				}
+
+				
+			}
+		}).start();
+	} 
+	
+	private void closeServer() {
+		
+			try {
+				if(this.server != null) {
+					this.server.close();
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		
 	}
 	
 
 
 	public static void main(String[] args) {
 		final int PORT = 3000;
+		Server server = null ;
+
 		try {
-			new Server(PORT);
+			server = new Server(PORT);
+			server.startServer();
 			
 		}catch (Exception e) {
-			// TODO: handle exception
+			if(server != null)server.closeServer();
 		}
 	}
 
