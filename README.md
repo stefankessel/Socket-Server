@@ -1,8 +1,6 @@
-# Socket-Server
+# Socket-Server - MultiClient ChatApp
 
 ### final Project for a Java intermediate course
-
-Server - MultiClient ChatApp 
 
 ### MultiThreading, Singleton Design Pattern, Streams
 
